@@ -5,15 +5,20 @@ import Vue from 'vue'
 import axios from 'axios'
 import Utils from '@/js/utils/crypto.js'
 Vue.prototype.$axios = axios
-axios.defaults.baseURL = 'http://111.230.183.115:9090'
+// axios.defaults.baseURL = 'http://111.230.183.115:9090'
+axios.defaults.baseURL = 'http://localhost:9090'
+axios.defaults.withCredentials = true
+
 /**
  * 添加请求拦截器
  */
 axios.interceptors.request.use(function (config) {
-  config.data.date = formatDate()
-  config.data.time = formatTime()
-  if (config.data.data !== undefined) {
-    config.data.data = Utils.encrypt(JSON.stringify(config.data.data))
+  if (config.data !== undefined) {
+    config.data.date = formatDate()
+    config.data.time = formatTime()
+    if (config.data.data !== undefined) {
+      config.data.data = Utils.encrypt(JSON.stringify(config.data.data))
+    }
   }
   return config
 }, function (error) {
@@ -24,10 +29,12 @@ axios.interceptors.request.use(function (config) {
  * 添加响应拦截器
  */
 axios.interceptors.response.use(function (response) {
-  let data = Utils.decrypt(response.data.data)
-  response.data = JSON.parse(data)
-  if (response.data.data !== undefined && response.data.data !== '') {
-    response.data.data = JSON.parse(response.data.data)
+  if (response.data !== undefined && response.data !== '') {
+    let data = Utils.decrypt(response.data.data)
+    response.data = JSON.parse(data)
+    if (response.data.data !== undefined && response.data.data !== '') {
+      response.data.data = JSON.parse(response.data.data)
+    }
   }
   return response
 }, function (error) {

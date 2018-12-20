@@ -2,34 +2,18 @@
   <div id="app">
       <div id="nav">
         <el-container>
-          <el-aside width="200px">
-            <h1 class="animated infinite bounce" @click="checkLogin">{{username}}</h1>
-            <el-menu
-              default-active="2"
-              class="el-menu-vertical-demo"
-              @open="handleOpen"
-              @close="handleClose">
-              <el-menu-item index="1">
-                <router-link to="/"><i class="el-icon-menu"></i>Home</router-link>
-              </el-menu-item>
-              <el-menu-item index="2" @click="checkIn">
-                <i class="el-icon-loading"></i>
-                <span slot="title">Todo</span>
-              </el-menu-item>
-              <el-menu-item index="3">
-                <span slot="title"><router-link to="/time"> <i class="el-icon-loading"></i>Time</router-link></span>
-              </el-menu-item>
-              <el-menu-item index="4">
-                <span slot="title"><router-link to="/about"><i class="el-icon-info"></i>About</router-link></span>
-              </el-menu-item>
+          <el-header>
+            <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+              <el-menu-item index="99"><h1 class="animated infinite bounce" @click="checkLogin">{{username}}</h1></el-menu-item>
+              <el-menu-item index="1"><router-link to="/">Home</router-link></el-menu-item>
+              <el-menu-item index="2" @click="checkIn" ><a>Todo</a></el-menu-item>
+              <el-menu-item index="3"><router-link to="/time">Time</router-link></el-menu-item>
+              <el-menu-item index="4"><router-link to="/about">About</router-link></el-menu-item>
             </el-menu>
-          </el-aside>
-          <el-container>
-            <el-header><h1>Welcome</h1></el-header>
-              <el-main>
-              <router-view/>
-            </el-main>
-          </el-container>
+          </el-header>
+          <el-main>
+            <router-view/>
+          </el-main>
         </el-container>
         <el-dialog title="登陆/注册" :visible.sync="dialogFormVisible" width="480px">
           <el-form ref="form"  :model="form" :rules="rules">
@@ -38,6 +22,10 @@
             </el-form-item>
             <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
               <el-input style="width:300px" type="password" v-model="form.password" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="验证码" :label-width="formLabelWidth" prop="checkCode">
+              <el-input style="width:150px" type="password" v-model="form.checkCode" autocomplete="off"></el-input>
+              <img :src="checkCode" @click="getCheckCode">
             </el-form-item>
             <h4>如果未注册就是直接注册了</h4>
           </el-form>
@@ -51,10 +39,13 @@
 export default {
   data: function () {
     return {
+      activeIndex: '1',
       dialogFormVisible: false,
+      checkCode: this.$axios.defaults.baseURL + '/getCheckCode?d=' + this.$store.state.uuid + '&' + new Date(),
       form: {
         username: '',
-        password: ''
+        password: '',
+        checkCode: ''
       },
       rules: {
         username: [
@@ -62,6 +53,9 @@ export default {
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' }
+        ],
+        checkCode: [
+          { required: true, message: '请输入验证吗', trigger: 'blur' }
         ]
       },
       formLabelWidth: '80px'
@@ -73,6 +67,9 @@ export default {
     }
   },
   methods: {
+    getCheckCode () {
+      this.checkCode = this.$axios.defaults.baseURL + '/getCheckCode?d=' + this.$store.state.uuid + '&' + new Date()
+    },
     checkLogin () {
       if (!this.checkLoginFlag()) {
         this.$confirm('此操作将用户退出, 是否继续?', '提示', {
@@ -132,11 +129,8 @@ export default {
         }
       })
     },
-    handleOpen (key, keyPath) {
-      console.log(key, keyPath)
-    },
-    handleClose (key, keyPath) {
-      console.log(key, keyPath)
+    handleSelect(key, keyPath) {
+      console.log(key, keyPath);
     },
     checkIn () {
       if (!this.checkLoginFlag()) {

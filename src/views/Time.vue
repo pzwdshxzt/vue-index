@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div>
     <h1>{{selectTimeFormat}}</h1>
     <el-date-picker
       v-model="selectTime"
@@ -8,12 +8,9 @@
       placeholder="选择日期时间"
       default-time="17:30:00">
     </el-date-picker>
-    <h1>Count Down </h1>
-    <div class="animated infinite bounce">
-      <h1>{{countString}} </h1>
-      <h1 v-if="times > 0">还剩余 <strong>{{times}}</strong> 秒</h1>
+    <h1>{{countString}} </h1>
+    <h1 v-if="times > 0" class="animated infinite bounce"><strong>{{times}}</strong> 秒</h1>
       <el-progress :stroke-width="30"  :percentage="percentNum" class="el-progress"></el-progress>
-    </div>
   </div>
 </template>
 <script>

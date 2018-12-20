@@ -6,15 +6,14 @@ import router from './router'
 import store from './store'
 import lang from 'element-ui/lib/locale/lang/en'
 import locale from 'element-ui/lib/locale'
-import animate from 'animate.css'
-
+import animate from 'animate.css' // eslint-disable-line
 import md5 from 'js-md5'
 // 设置语言
 locale.use(lang)
 Vue.prototype.$md5 = md5
 Vue.config.productionTip = false
 Vue.use(ElementUI)
-
+console.log(animate)
 // 引入mockjs
 require('./mock.js')
 require('./js/utils/axios.js')

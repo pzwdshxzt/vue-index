@@ -16,7 +16,8 @@ export default new Vuex.Store({
       username: localStorage.getItem('username') || '未登录',
       password: localStorage.getItem('password') || '',
       id: localStorage.getItem('id') || ''
-    }
+    },
+    uuid: guid()
   },
   mutations: {
     [ADDTIME_MUTATION] (state, params) {
@@ -58,3 +59,13 @@ export default new Vuex.Store({
     }
   }
 })
+
+/**
+ * @return {string}
+ */
+function S4 () {
+  return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+}
+function guid () {
+  return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4())
+}
