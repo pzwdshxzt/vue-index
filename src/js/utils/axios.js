@@ -1,10 +1,8 @@
 /**
  * axios 配置
  */
-import Vue from 'vue'
 import axios from 'axios'
 import Utils from '@/js/utils/crypto.js'
-Vue.prototype.$axios = axios
 // axios.defaults.baseURL = 'http://111.230.183.115:9090'
 axios.defaults.baseURL = 'http://localhost:9090'
 axios.defaults.withCredentials = true
@@ -12,35 +10,41 @@ axios.defaults.withCredentials = true
 /**
  * 添加请求拦截器
  */
-axios.interceptors.request.use(function (config) {
-  if (config.data !== undefined) {
-    config.data.date = formatDate()
-    config.data.time = formatTime()
-    if (config.data.data !== undefined) {
-      config.data.data = Utils.encrypt(JSON.stringify(config.data.data))
+axios.interceptors.request.use(
+  config => {
+    if (config.data !== undefined) {
+      config.data.date = formatDate()
+      config.data.time = formatTime()
+      if (config.data.data !== undefined) {
+        config.data.data = Utils.encrypt(JSON.stringify(config.data.data))
+      }
     }
-  }
-  return config
-}, function (error) {
+    return config
+  },
+  error => {
   // 对请求错误做些什么
-  return Promise.reject(error)
-})
+    return Promise.reject(error)
+  }
+)
 /**
  * 添加响应拦截器
  */
-axios.interceptors.response.use(function (response) {
-  if (response.data !== undefined && response.data !== '') {
-    let data = Utils.decrypt(response.data.data)
-    response.data = JSON.parse(data)
-    if (response.data.data !== undefined && response.data.data !== '') {
-      response.data.data = JSON.parse(response.data.data)
+axios.interceptors.response.use(
+  response => {
+    if (response.data !== undefined && response.data !== '') {
+      let data = Utils.decrypt(response.data.data)
+      response.data = JSON.parse(data)
+      if (response.data.data !== undefined && response.data.data !== '') {
+        response.data.data = JSON.parse(response.data.data)
+      }
     }
-  }
-  return response
-}, function (error) {
+    return response
+  },
+  error => {
   // 对响应错误做点什么
-  return Promise.reject(error)
-})
+    return Promise.reject(error)
+  }
+)
 
 function formatDate () {
   let time = new Date()
@@ -51,3 +55,5 @@ function formatTime () {
   let time = new Date()
   return `${time.getHours() >= 10 ? time.getHours() : '0' + time.getHours()}:${time.getMinutes() >= 10 ? time.getMinutes() : '0' + time.getMinutes()}:${time.getSeconds() >= 10 ? time.getSeconds() : '0' + time.getSeconds()}`
 }
+
+export default axios

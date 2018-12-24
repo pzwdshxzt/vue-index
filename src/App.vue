@@ -24,7 +24,7 @@
               <el-input style="width:300px" type="password" v-model="form.password" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="验证码" :label-width="formLabelWidth" prop="checkCode">
-              <el-input style="width:150px" type="password" v-model="form.checkCode" autocomplete="off"></el-input>
+              <el-input style="width:150px" v-model="form.checkCode" autocomplete="off"></el-input>
               <img :src="checkCode" @click="getCheckCode">
             </el-form-item>
             <h4>如果未注册就是直接注册了</h4>
@@ -71,16 +71,31 @@ export default {
       this.checkCode = this.$axios.defaults.baseURL + '/getCheckCode?d=' + this.$store.state.uuid + '&' + new Date()
     },
     checkLogin () {
+
       if (!this.checkLoginFlag()) {
         this.$confirm('此操作将用户退出, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$store.dispatch('loginOut')
-          this.$message({
-            type: 'success',
-            message: '已注销!'
+          this.$axios.post('user/logout', {}, {
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Content-Type': 'application/json'
+            } }
+          ).then((Response) => {
+            if (Response.data.code === 200) {
+              this.$message({
+                type: 'success',
+                message: '已注销!'
+              })
+              this.$store.dispatch('loginOut')
+            } else {
+              this.$message({
+                type: 'warning',
+                message: Response.data.msg
+              })
+            }
           })
         }).catch(() => {
           this.$message({
@@ -129,8 +144,8 @@ export default {
         }
       })
     },
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath);
+    handleSelect (key, keyPath) {
+      console.log(key, keyPath)
     },
     checkIn () {
       if (!this.checkLoginFlag()) {
