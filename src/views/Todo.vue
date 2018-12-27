@@ -3,7 +3,6 @@
     <div>
       <el-table :default-sort = "{prop: 'date', order: 'descending'}"
         :data="tableData"
-        @row-click="show_todo"
         stripe sortable
         style="width: 100%">
         <el-table-column
@@ -12,9 +11,11 @@
         >
         </el-table-column>
         <el-table-column
-          prop="title"
           label="标题"
           >
+          <template slot-scope="scope">
+            <el-button type="primary" @click="show_todo(scope.row)" size="mini">{{scope.row['title']}}</el-button>
+          </template>
         </el-table-column>
         <el-table-column
           prop="count"
@@ -87,11 +88,12 @@ export default {
   },
   methods: {
     show_todo (row) {
-      this.$notify({
+      let hello = this.$notify({
         title: row.title,
         message: row.todo,
         type: 'success'
       })
+      console.log(hello)
     },
     updateTable () {
       this.$axios.post('user/getTodoList', { data: this.$store.state.user }

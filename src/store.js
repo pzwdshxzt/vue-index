@@ -34,6 +34,7 @@ export default new Vuex.Store({
       localStorage.setItem('username', params.username)
       localStorage.setItem('password', params.password)
       state.user = params
+      localStorage.setItem('token', params.token)
     },
     [LOGINOUT] (state) {
       state.user = {

@@ -12,6 +12,11 @@ axios.defaults.withCredentials = true
  */
 axios.interceptors.request.use(
   config => {
+    let token = localStorage.getItem('token')
+    console.log(token)
+    if (token !== undefined) {
+      config.headers.Authorization = token
+    }
     if (config.data !== undefined) {
       config.data.date = formatDate()
       config.data.time = formatTime()
