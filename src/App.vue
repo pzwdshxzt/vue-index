@@ -166,7 +166,7 @@ export default {
       })
     },
     handleSelect (key, keyPath) {
-      console.log(key, keyPath)
+      // console.log(key, keyPath)
     },
     checkIn () {
       if (!this.checkLoginFlag()) {

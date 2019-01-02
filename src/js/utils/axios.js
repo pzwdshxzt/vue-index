@@ -3,6 +3,8 @@
  */
 import axios from 'axios'
 import Utils from '@/js/utils/crypto.js'
+import { Message } from 'element-ui'
+import store from '../../store'
 // axios.defaults.baseURL = 'http://111.230.183.115:9090'
 axios.defaults.baseURL = 'http://localhost:9090'
 axios.defaults.withCredentials = true
@@ -13,9 +15,9 @@ axios.defaults.withCredentials = true
 axios.interceptors.request.use(
   config => {
     let token = localStorage.getItem('token')
-    console.log(token)
+    // console.log(token)
     if (token !== undefined) {
-      config.headers.Authorization = token
+      config.headers.Authorization = Utils.encrypt(token)
     }
     if (config.data !== undefined) {
       config.data.date = formatDate()
@@ -46,8 +48,16 @@ axios.interceptors.response.use(
     return response
   },
   error => {
-  // 对响应错误做点什么
-    return Promise.reject(error)
+    if (error.response.data.code === 999) {
+      Message({
+        type: 'warning',
+        message: error.response.data.msg
+      })
+      store.dispatch('loginOut')
+    }
+    // return Promise.reject(error)
+    // return error.response
+    // return Promise.
   }
 )
 
